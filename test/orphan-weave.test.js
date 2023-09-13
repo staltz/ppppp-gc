@@ -11,8 +11,11 @@ function getTexts(msgs) {
   return msgs.filter((msg) => msg.data?.text).map((msg) => msg.data.text)
 }
 
-test('purge an orphan weave', async (t) => {
-  const alice = createPeer({ name: 'alice' })
+test('orphan weave msgs', async (t) => {
+  const alice = createPeer({
+    name: 'alice',
+    gc: { maxLogBytes: 100 * 1024 * 1024 },
+  })
 
   await alice.db.loaded()
 
@@ -27,7 +30,7 @@ test('purge an orphan weave', async (t) => {
     keypair: bobKeypair,
     _nonce: 'bob',
   })
-  // Alice creates Bob
+  // Alice creates Carol
   const carolID = await p(alice.db.account.create)({
     domain: 'account',
     keypair: carolKeypair,
