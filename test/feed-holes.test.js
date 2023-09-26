@@ -40,25 +40,26 @@ test('feed holes', async (t) => {
   await p(alice.db.del)(posts[3])
   await p(alice.db.del)(posts[4])
   await p(alice.db.del)(posts[5])
-  await p(alice.db.del)(posts[6])
+  await p(alice.db.erase)(posts[6]) // vital as trail from A7
   assert('alice deleted the middle part of the feed')
 
   assert.deepEqual(
     getTexts([...alice.db.msgs()]),
-    ['A0', 'A1', 'A2', 'A7', 'A8', 'A9'],
+    ['A0', 'A1', 'A2', /*                   */ 'A7', 'A8', 'A9'],
     'alice has the beginning and the end of the feed'
   )
 
   alice.goals.set(aliceID, 'all') // alice wants her account tangle
   const postFeedID = alice.db.feed.getID(aliceID, 'post')
-  alice.goals.set(postFeedID, 'newest-3')
-  assert('alice set a goal for newest-3 of post feed')
+  // notice 4 on purpose, because we want to make sure A2 is deleted
+  alice.goals.set(postFeedID, 'newest-4')
+  assert('alice set a goal for newest-4 of post feed')
 
   await p(alice.gc.forceImmediately)()
 
   assert.deepEqual(
     getTexts([...alice.db.msgs()]),
-    ['A7', 'A8', 'A9'],
+    [/*                                     */ 'A7', 'A8', 'A9'],
     'alice has only the end of the feed'
   )
 
