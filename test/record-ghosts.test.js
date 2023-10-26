@@ -22,11 +22,11 @@ function isPresent(msg) {
   return !!msg.data.update
 }
 
-test('record ghosts', async (t) => {
+test('Dict ghosts', async (t) => {
   const alice = createPeer({
     name: 'alice',
     gc: { maxLogBytes: 100 * 1024 * 1024 },
-    record: { ghostSpan: 2 },
+    dict: { ghostSpan: 2 },
   })
 
   await alice.db.loaded()
@@ -37,14 +37,14 @@ test('record ghosts', async (t) => {
     _nonce: 'alice',
   })
 
-  // Alice constructs a record
-  await p(alice.record.load)(aliceID)
-  await p(alice.record.update)('profile', { name: 'alice' })
-  await p(alice.record.update)('profile', { age: 24 })
-  await p(alice.record.update)('profile', { name: 'Alice' })
-  await p(alice.record.update)('profile', { age: 25 })
-  await p(alice.record.update)('profile', { name: 'ALICE' })
-  const recordID = alice.record.getFeedID('profile')
+  // Alice constructs adict
+  await p(alice.dict.load)(aliceID)
+  await p(alice.dict.update)('profile', { name: 'alice' })
+  await p(alice.dict.update)('profile', { age: 24 })
+  await p(alice.dict.update)('profile', { name: 'Alice' })
+  await p(alice.dict.update)('profile', { age: 25 })
+  await p(alice.dict.update)('profile', { name: 'ALICE' })
+  const dictID = alice.dict.getFeedID('profile')
 
   let mootID
   let msgID1
@@ -65,7 +65,7 @@ test('record ghosts', async (t) => {
   assert.deepEqual(
     getFields([...alice.db.msgs()]),
     ['alice', 24, 'Alice', 25, 'ALICE'],
-    'has all record msgs'
+    'has all dict msgs'
   )
   assert.ok(isErased(alice.db.get(mootID)), 'moot by def erased')
   assert.ok(isPresent(alice.db.get(msgID1)), 'msg1 exists')
@@ -76,7 +76,7 @@ test('record ghosts', async (t) => {
 
   // Perform garbage collection
   alice.goals.set(aliceID, 'all')
-  alice.goals.set(recordID, 'record')
+  alice.goals.set(dictID, 'dict')
   await p(alice.gc.forceImmediately)()
 
   // Assert situation after GC
@@ -93,7 +93,7 @@ test('record ghosts', async (t) => {
   assert.ok(isPresent(alice.db.get(msgID4)), 'msg4 exists')
   assert.ok(isPresent(alice.db.get(msgID5)), 'msg5 exists')
 
-  assert.deepEqual(alice.db.ghosts.get(recordID), [msgID2])
+  assert.deepEqual(alice.db.ghosts.get(dictID), [msgID2])
 
   await p(alice.close)(true)
 })
