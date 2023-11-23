@@ -33,11 +33,11 @@ test('Dict ghosts', async (t) => {
 
   // Alice creates her own account
   const aliceID = await p(alice.db.account.create)({
-    domain: 'account',
+    subdomain: 'account',
     _nonce: 'alice',
   })
 
-  // Alice constructs adict
+  // Alice constructs a dict
   await p(alice.dict.load)(aliceID)
   await p(alice.dict.update)('profile', { name: 'alice' })
   await p(alice.dict.update)('profile', { age: 24 })
@@ -74,6 +74,12 @@ test('Dict ghosts', async (t) => {
   assert.ok(isPresent(alice.db.get(msgID4)), 'msg4 exists')
   assert.ok(isPresent(alice.db.get(msgID5)), 'msg5 exists')
 
+  assert.deepEqual(
+    await p(alice.db.log.stats)(),
+    { totalBytes: 3684, deletedBytes: 0 },
+    'log stats before'
+  )
+
   // Perform garbage collection
   alice.goals.set(aliceID, 'all')
   alice.goals.set(dictID, 'dict')
@@ -84,6 +90,12 @@ test('Dict ghosts', async (t) => {
     getFields([...alice.db.msgs()]),
     [25, 'ALICE'],
     'alice has only field root msgs'
+  )
+
+  assert.deepEqual(
+    await p(alice.db.log.stats)(),
+    { totalBytes: 2572, deletedBytes: 0 },
+    'log stats after'
   )
 
   assert.ok(isErased(alice.db.get(mootID)), 'moot by def erased')

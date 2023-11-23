@@ -28,6 +28,7 @@
     "multicb": "^1.2.2"
   },
   "devDependencies": {
+    "@types/node": "18.x",
     "@types/debug": "4.1.9",
     "bs58": "^5.0.0",
     "c8": "7",

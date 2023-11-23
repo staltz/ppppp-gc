@@ -17,7 +17,7 @@ test('feed decay', async (t) => {
 
   // Alice creates her own account
   const aliceID = await p(alice.db.account.create)({
-    domain: 'account',
+    subdomain: 'account',
     _nonce: 'alice',
   })
 

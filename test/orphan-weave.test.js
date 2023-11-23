@@ -21,18 +21,18 @@ test('orphan weave msgs', async (t) => {
 
   // Alice creates her own account
   const aliceID = await p(alice.db.account.create)({
-    domain: 'account',
+    subdomain: 'account',
     _nonce: 'alice',
   })
   // Alice creates Bob
   const bobID = await p(alice.db.account.create)({
-    domain: 'account',
+    subdomain: 'account',
     keypair: bobKeypair,
     _nonce: 'bob',
   })
   // Alice creates Carol
   const carolID = await p(alice.db.account.create)({
-    domain: 'account',
+    subdomain: 'account',
     keypair: carolKeypair,
     _nonce: 'carol',
   })
