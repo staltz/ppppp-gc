@@ -7,7 +7,7 @@ function getTexts(msgs) {
   return msgs.filter((msg) => msg.data?.text).map((msg) => msg.data.text)
 }
 
-test('feed holes', async (t) => {
+test('Feed holes', async (t) => {
   const alice = createPeer({
     name: 'alice',
     gc: { maxLogBytes: 100 * 1024 * 1024 },

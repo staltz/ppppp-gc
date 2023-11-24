@@ -11,7 +11,7 @@ function getTexts(msgs) {
   return msgs.filter((msg) => msg.data?.text).map((msg) => msg.data.text)
 }
 
-test('orphan weave msgs', async (t) => {
+test('Orphan weave msgs', async (t) => {
   const alice = createPeer({
     name: 'alice',
     gc: { maxLogBytes: 100 * 1024 * 1024 },
