@@ -25,7 +25,6 @@ function isPresent(msg) {
 test('Dict ghosts', async (t) => {
   const alice = createPeer({
     name: 'alice',
-    gc: { maxLogBytes: 100 * 1024 * 1024 },
     dict: { ghostSpan: 2 },
   })
 

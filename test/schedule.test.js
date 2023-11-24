@@ -8,11 +8,7 @@ function getTexts(msgs) {
 }
 
 test('Cleanup is scheduled automatically', async (t) => {
-  const alice = createPeer({
-    name: 'alice',
-    gc: { maxLogBytes: 4 * 1024 }, // 4kB, approximately 8 messages
-  })
-
+  const alice = createPeer({ name: 'alice' })
   await alice.db.loaded()
 
   // Alice creates her own account
@@ -40,9 +36,8 @@ test('Cleanup is scheduled automatically', async (t) => {
   alice.goals.set(postFeedID, 'newest-3')
   assert('alice set a goal for newest-3 of post feed')
 
-  alice.gc.start()
-
-  await p(setTimeout)(3000)
+  alice.gc.start(4 * 1024), // 4kB, approximately 8 messages
+    await p(setTimeout)(3000)
 
   assert.deepEqual(
     getTexts([...alice.db.msgs()]),
@@ -54,11 +49,7 @@ test('Cleanup is scheduled automatically', async (t) => {
 })
 
 test('Compaction is scheduled automatically', async (t) => {
-  const alice = createPeer({
-    name: 'alice',
-    gc: { maxLogBytes: 6 * 1024 }, // 6kB, approximately 12 messages
-  })
-
+  const alice = createPeer({ name: 'alice' })
   await alice.db.loaded()
 
   // Alice creates her own account
@@ -101,7 +92,7 @@ test('Compaction is scheduled automatically', async (t) => {
   alice.goals.set(alice.db.feed.getID(aliceID, 'post3'), 'all')
   alice.goals.set(alice.db.feed.getID(aliceID, 'post4'), 'all')
 
-  alice.gc.start()
+  alice.gc.start(6 * 1024) // 6kB, approximately 12 messages
 
   await p(setTimeout)(3000)
 

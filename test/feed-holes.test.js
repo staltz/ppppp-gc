@@ -10,7 +10,6 @@ function getTexts(msgs) {
 test('Feed holes', async (t) => {
   const alice = createPeer({
     name: 'alice',
-    gc: { maxLogBytes: 100 * 1024 * 1024 },
   })
 
   await alice.db.loaded()
