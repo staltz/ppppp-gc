@@ -103,3 +103,46 @@ test('Compaction is scheduled automatically', async (t) => {
 
   await p(alice.close)(true)
 })
+
+test('start() will automatically stop()', async (t) => {
+  const alice = createPeer({ name: 'alice' })
+  await alice.db.loaded()
+
+  // Alice creates her own account
+  const aliceID = await p(alice.db.account.create)({
+    subdomain: 'account',
+    _nonce: 'alice',
+  })
+
+  alice.goals.set(aliceID, 'all') // alice wants her account tangle
+  const postFeedID = alice.db.feed.getID(aliceID, 'post')
+  alice.goals.set(postFeedID, 'newest-3')
+  assert('alice set a goal for newest-3 of post feed')
+
+  alice.gc.start(40 * 1024) // 40kB
+
+  for (let i = 0; i < 5; i++) {
+    await p(alice.db.feed.publish)({
+      account: aliceID,
+      domain: 'post',
+      data: { text: 'A' + i },
+    })
+  }
+
+  assert.deepEqual(
+    getTexts([...alice.db.msgs()]),
+    ['A0', 'A1', 'A2', 'A3', 'A4'],
+    'alice has the whole feed'
+  )
+
+  alice.gc.start(4 * 1024) // 4kB, approximately 8 messages
+  await p(setTimeout)(3000)
+
+  assert.deepEqual(
+    getTexts([...alice.db.msgs()]),
+    ['A2', 'A3', 'A4'],
+    'alice has only latest 3 msgs in the feed'
+  )
+
+  await p(alice.close)(true)
+})
