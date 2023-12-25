@@ -75,7 +75,7 @@ test('Dict ghosts', async (t) => {
 
   assert.deepEqual(
     await p(alice.db.log.stats)(),
-    { totalBytes: 3684, deletedBytes: 0 },
+    { totalBytes: 4520, deletedBytes: 0 },
     'log stats before'
   )
 
@@ -93,7 +93,7 @@ test('Dict ghosts', async (t) => {
 
   assert.deepEqual(
     await p(alice.db.log.stats)(),
-    { totalBytes: 2572, deletedBytes: 0 },
+    { totalBytes: 3121, deletedBytes: 0 },
     'log stats after'
   )
 
