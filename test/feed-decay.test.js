@@ -8,9 +8,7 @@ function getTexts(msgs) {
 }
 
 test('Feed decay', async (t) => {
-  const alice = createPeer({
-    name: 'alice',
-  })
+  const alice = createPeer({ name: 'alice' })
 
   await alice.db.loaded()
 

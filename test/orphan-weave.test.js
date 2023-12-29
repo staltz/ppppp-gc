@@ -12,9 +12,7 @@ function getTexts(msgs) {
 }
 
 test('Orphan weave msgs', async (t) => {
-  const alice = createPeer({
-    name: 'alice',
-  })
+  const alice = createPeer({ name: 'alice' })
 
   await alice.db.loaded()
 
