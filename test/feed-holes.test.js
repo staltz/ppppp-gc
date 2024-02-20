@@ -52,13 +52,25 @@ test('Feed holes', async (t) => {
   alice.goals.set(postFeedID, 'newest-4')
   assert('alice set a goal for newest-4 of post feed')
 
+  // Mock db.erase so we can inspect how many times it was called
+  const prevErase = alice.db.erase
+  const calledErase = []
+  alice.db.erase = (msgID, cb) => {
+    calledErase.push(msgID)
+    prevErase(msgID, cb)
+  }
+
   await p(alice.gc.forceImmediately)()
+  assert.deepEqual(calledErase, [posts[2]], 'erased A2')
 
   assert.deepEqual(
     getTexts([...alice.db.msgs()]),
     [/*                                     */ 'A7', 'A8', 'A9'],
     'alice has only the end of the feed'
   )
+
+  await p(alice.gc.forceImmediately)()
+  assert.deepEqual(calledErase, [posts[2]], 'no double erasing')
 
   await p(alice.close)(true)
 })
